@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 18
       - name: Install packages for github-script
-        run: npm i -g date-fns
+        run: npm i date-fns
       - name: Create Release Issue
         uses: actions/github-script@v6
         with:
