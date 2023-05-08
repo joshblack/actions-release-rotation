@@ -66,7 +66,7 @@ jobs:
             if (currentReleaseIssue) {
               ISSUE_BODY.push('| Last week | Value |');
               ISSUE_BODY.push('| :-- | :-- |');
-              ISSUE_BODY.push('| Issue | [${currentReleaseIssue.title}](${currentReleaseIssue.html_url}) |');
+              ISSUE_BODY.push(`| Issue | [${currentReleaseIssue.title}](${currentReleaseIssue.html_url}) |`);
               ISSUE_BODY.push('| Conductor | |');
 
               github.rest.issues.update({
@@ -85,6 +85,15 @@ jobs:
             for (const day of eachDayOfInterval({ start, end })) {
               ISSUE_BODY.push(`- ${format(day, 'EEEE do')}`);
             }
+            
+            ISSUE_BODY.push('');
+
+            ISSUE_BODY.push('## Checklist');
+            ISSUE_BODY.push('');
+            ISSUE_BODY.push('- [ ] Prerelease available on npm');
+            ISSUE_BODY.push('- [ ] Integration checks passed');
+            ISSUE_BODY.push('- [ ] Release available on npm');
+            ISSUE_BODY.push('- [ ] Dependencies have been updated to latest');
             
             await github.rest.issues.create({
               owner: context.repo.owner,
