@@ -3,7 +3,11 @@ on:
 #   schedule:
 #     - cron: '0 0 * * MON'
   workflow_dispatch:
-    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
 jobs:
   create-issue:
     runs-on: ubuntu-latest
@@ -16,9 +20,55 @@ jobs:
         with:
           script: |
             const ISSUE_TITLE = 'Release Tracking'
+            const ISSUE_BODY = [
+              '_This is a weekly scheduled issue for release tracking_',
+              '## Checklist',
+              '',
+              '- [ ] Item one',
+              '- [ ] Item two',
+              '',
+              '## Timeline',
+              '<!-- Provide updates for release activities, like cutting releases and different integration points -->',
+              '',
+              '## Challenges',
+              '<!-- Provide information about release issues that came up during this cycle',
+            ].join('\n');
+            
+            const iterator = github.paginate.iterator(
+              github.rest.issues.listForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100,
+              }
+            );
+            
+            let currentReleaseIssue = null;
+            
+            for await (const page of iterator) {
+              currentReleaseIssue = page.find((issue) => {
+                return issue.title === ISSUE_TITLE;
+              });
+              
+              if (currentReleaseIssue) {
+                break;
+              }
+            }
+            
+            if (currentReleaseIssue) {
+              github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: currentReleaseIssue.number,
+                state: 'closed',
+                state_reason: 'completed',
+              });
+            }
             
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: ISSUE_TITLE,
+              body: ISSUE_BODY,
             });
