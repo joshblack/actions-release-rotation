@@ -15,13 +15,13 @@ jobs:
     permissions:
       issues: write
     steps:
+      - name: Set up package.json
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
       - name: Install packages for github-script
-        run: npm i date-fns
+        run: npm i -g date-fns
       - name: Create Release Issue
         uses: actions/github-script@v6
         with:
