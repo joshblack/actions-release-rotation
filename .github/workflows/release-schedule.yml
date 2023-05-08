@@ -23,6 +23,9 @@ jobs:
         run: npm i date-fns
       - name: Create Release Issue
         uses: actions/github-script@v6
+        env:
+          ROTATION: |
+            joshblack
         with:
           script: |
             const startOfWeek = require('date-fns/startOfWeek');
@@ -33,6 +36,9 @@ jobs:
             const today = new Date();
             const start = startOfWeek(today, { weekStartsOn: 1 });
             const end = nextFriday(start);
+            const { ROTATION } = process.env;
+            const rotation = ROTATION.split('\n');
+            let assignee = rotation[0];
             
             const ISSUE_TITLE = 'Release Tracking'
             
@@ -64,10 +70,15 @@ jobs:
             ];
             
             if (currentReleaseIssue) {
+
+              const assignees = currentReleaseIssue.assignees.map((assignee) => {
+                return `@${assignee.login}`;
+              });
+
               ISSUE_BODY.push('| Last week | Value |');
               ISSUE_BODY.push('| :-- | :-- |');
               ISSUE_BODY.push(`| Issue | [${currentReleaseIssue.title}](${currentReleaseIssue.html_url}) |`);
-              ISSUE_BODY.push('| Conductor | |');
+              ISSUE_BODY.push('| Conductor(s) | ${assignees.join(' ')} |');
 
               github.rest.issues.update({
                 owner: context.repo.owner,
@@ -76,6 +87,13 @@ jobs:
                 state: 'closed',
                 state_reason: 'completed',
               });
+              
+              if (currentReleaseIssue.assignees.length > 0) {
+                const currentAssignee = currentReleaseIssue.assignees[0].login;
+                if (rotation.includes(currentAssignee)) {
+                  assignee = rotation[(rotation.indexOf(currentAssignee) + 1) % rotation.length];
+                }
+              }
             }
             
             ISSUE_BODY.push('## Timeline');
@@ -100,4 +118,5 @@ jobs:
               repo: context.repo.repo,
               title: ISSUE_TITLE,
               body: ISSUE_BODY.join('\n'),
+              assignees: assignee ? [assignee] : [],
             });
