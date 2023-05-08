@@ -2,7 +2,6 @@ name: 'Release Schedule'
 inputs:
   rotation:
     required: true
-    default: []
   github-token:
     required: true
 runs:
