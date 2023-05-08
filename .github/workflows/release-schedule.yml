@@ -37,8 +37,10 @@ jobs:
             const start = startOfWeek(today, { weekStartsOn: 1 });
             const end = nextFriday(start);
             const { ROTATION } = process.env;
-            const rotation = ROTATION.split('\n');
+            const rotation = ROTATION.split('\n').map((item) => item.trim());
             let assignee = rotation[0];
+            
+            core.info(`Rotation: ${rotation.join(', ')}`);
             
             const ISSUE_TITLE = 'Release Tracking'
             
@@ -89,6 +91,7 @@ jobs:
               
               if (currentReleaseIssue.assignees.length > 0) {
                 const currentAssignee = currentReleaseIssue.assignees[0].login;
+                console.log(currentAssignee);
                 if (rotation.includes(currentAssignee)) {
                   assignee = rotation[(rotation.indexOf(currentAssignee) + 1) % rotation.length];
                 }
