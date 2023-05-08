@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - uses: ./.github/actions/release-schedule@main
+      - uses: ./.github/actions/release-schedule
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           rotation: |
