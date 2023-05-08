@@ -1,0 +1,24 @@
+name: Release Schedule
+on:
+#   schedule:
+#     - cron: '0 0 * * MON'
+  workflow_dispatch:
+    
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'joshblack/actions-release-rotation' }}
+    permissions:
+      issues: write
+    steps:
+      - name: Create Release Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const ISSUE_TITLE = 'Release Tracking'
+            
+            await octokit.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: ISSUE_TITLE,
+            });
