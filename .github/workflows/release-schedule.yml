@@ -34,19 +34,6 @@ jobs:
             const end = nextFriday(start);
             
             const ISSUE_TITLE = 'Release Tracking'
-            const ISSUE_BODY = [
-              `_This is a weekly scheduled issue for release tracking between ${format(start, 'EEEE do')} and ${format(end, 'EEEE do')}_`,
-              '## Checklist',
-              '',
-              '- [ ] Item one',
-              '- [ ] Item two',
-              '',
-              '## Timeline',
-              '<!-- Provide updates for release activities, like cutting releases and different integration points -->',
-              '',
-              '## Challenges',
-              '<!-- Provide information about release issues that came up during this cycle',
-            ].join('\n');
             
             const iterator = github.paginate.iterator(
               github.rest.issues.listForRepo,
@@ -70,7 +57,15 @@ jobs:
               }
             }
             
+            const ISSUE_BODY = [
+              `_This is a scheduled issue for tracking the release between ${format(start, 'EEEE do')} and ${format(end, 'EEEE do')}_`,
+              '',
+            ];
+            
             if (currentReleaseIssue) {
+              ISSUE_BODY.push(`[Previous Release](${currentReleaseIssue.html_url})`);
+              ISSUE_BODY.push('');
+
               github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -79,6 +74,16 @@ jobs:
                 state_reason: 'completed',
               });
             }
+            
+            ISSUE_BODY.push(...[
+              '## Timeline',
+              '<!-- Provide updates for release activities, like cutting releases and different integration points -->',
+              '- Monday',
+              '- Tuesday',
+              '- Wednesday',
+              '- Thursday',
+              '- Friday',
+            ]);
             
             await github.rest.issues.create({
               owner: context.repo.owner,
