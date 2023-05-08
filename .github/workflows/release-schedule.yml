@@ -28,6 +28,7 @@ jobs:
             const startOfWeek = require('date-fns/startOfWeek');
             const nextFriday = require('date-fns/nextFriday');
             const format = require('date-fns/format');
+            const eachDayOfInterval = require('date-fns/eachDayOfInterval');
             
             const today = new Date();
             const start = startOfWeek(today, { weekStartsOn: 1 });
@@ -63,8 +64,10 @@ jobs:
             ];
             
             if (currentReleaseIssue) {
-              ISSUE_BODY.push(`[Previous Release](${currentReleaseIssue.html_url})`);
-              ISSUE_BODY.push('');
+              ISSUE_BODY.push('| Last week | Value |');
+              ISSUE_BODY.push('| :-- | :-- |');
+              ISSUE_BODY.push('| Issue | [Issue Link](${currentReleaseIssue.html_url}) |');
+              ISSUE_BODY.push('| Conductor | |');
 
               github.rest.issues.update({
                 owner: context.repo.owner,
@@ -75,15 +78,13 @@ jobs:
               });
             }
             
-            ISSUE_BODY.push(...[
-              '## Timeline',
-              '<!-- Provide updates for release activities, like cutting releases and different integration points -->',
-              '- Monday',
-              '- Tuesday',
-              '- Wednesday',
-              '- Thursday',
-              '- Friday',
-            ]);
+            ISSUE_BODY.push('## Timeline');
+            ISSUE_BODY.push('<!-- Provide updates for release activities, like cutting releases and different integration points -->');
+            ISSUE_BODY.push('');
+            
+            for (const day of eachDayOfInterval({ start, end })) {
+              ISSUE_BODY.push(`- ${format(day, 'EEEE do')}`);
+            }
             
             await github.rest.issues.create({
               owner: context.repo.owner,
