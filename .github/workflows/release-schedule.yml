@@ -70,7 +70,6 @@ jobs:
             ];
             
             if (currentReleaseIssue) {
-
               const assignees = currentReleaseIssue.assignees.map((assignee) => {
                 return `@${assignee.login}`;
               });
@@ -78,7 +77,7 @@ jobs:
               ISSUE_BODY.push('| Last week | Value |');
               ISSUE_BODY.push('| :-- | :-- |');
               ISSUE_BODY.push(`| Issue | [${currentReleaseIssue.title}](${currentReleaseIssue.html_url}) |`);
-              ISSUE_BODY.push('| Conductor(s) | ${assignees.join(' ')} |');
+              ISSUE_BODY.push(`| Conductor(s) | ${assignees.join(' ')} |`);
 
               github.rest.issues.update({
                 owner: context.repo.owner,
