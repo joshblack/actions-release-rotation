@@ -17,7 +17,7 @@ jobs:
           script: |
             const ISSUE_TITLE = 'Release Tracking'
             
-            await octokit.rest.issues.create({
+            await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: ISSUE_TITLE,
