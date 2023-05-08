@@ -102,7 +102,7 @@ jobs:
             ISSUE_BODY.push('');
             
             for (const day of eachDayOfInterval({ start, end })) {
-              ISSUE_BODY.push(`- ${format(day, 'yyyy/M/d')}`);
+              ISSUE_BODY.push(`- ${format(day, 'EEEE do')}`);
             }
             
             ISSUE_BODY.push('');
