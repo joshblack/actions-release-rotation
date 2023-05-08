@@ -12,7 +12,8 @@ runs:
         with:
           node-version: 18
       - name: Install packages for github-script
-        run: npm i date-fns
+        run: npm i date-fns\
+        shell: bash
       - name: Create Release Issue
         uses: actions/github-script@v6
         env:
