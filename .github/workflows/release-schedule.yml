@@ -91,7 +91,6 @@ jobs:
               
               if (currentReleaseIssue.assignees.length > 0) {
                 const currentAssignee = currentReleaseIssue.assignees[0].login;
-                console.log(currentAssignee);
                 if (rotation.includes(currentAssignee)) {
                   assignee = rotation[(rotation.indexOf(currentAssignee) + 1) % rotation.length];
                 }
@@ -103,7 +102,7 @@ jobs:
             ISSUE_BODY.push('');
             
             for (const day of eachDayOfInterval({ start, end })) {
-              ISSUE_BODY.push(`- ${format(day, 'EEEE do')}`);
+              ISSUE_BODY.push(`- ${format(day, 'yyyy/M/d')}`);
             }
             
             ISSUE_BODY.push('');
@@ -114,6 +113,8 @@ jobs:
             ISSUE_BODY.push('- [ ] Integration checks passed');
             ISSUE_BODY.push('- [ ] Release available on npm');
             ISSUE_BODY.push('- [ ] Dependencies have been updated to latest');
+            
+            core.info(`Assignee: ${assignee}`);
             
             await github.rest.issues.create({
               owner: context.repo.owner,
