@@ -47,6 +47,7 @@ jobs:
             let currentReleaseIssue = null;
             
             for await (const page of iterator) {
+              console.log(page);
               currentReleaseIssue = page.find((issue) => {
                 return issue.title === ISSUE_TITLE;
               });
